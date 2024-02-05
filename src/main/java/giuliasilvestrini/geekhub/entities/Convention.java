@@ -37,10 +37,15 @@ public class Convention {
 //    private Province province;
 //    @ManyToOne
 //    private City city;
-    private String via;
-    private String numeroCivico;
+
+    private String region;
+    private String province;
+    private String city;
+
+    private String street;
+    private String houseNumber;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "convention", cascade = CascadeType.ALL)
     private List<Section> sectionList;
 }

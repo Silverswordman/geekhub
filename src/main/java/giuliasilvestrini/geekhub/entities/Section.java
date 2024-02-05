@@ -1,10 +1,11 @@
 package giuliasilvestrini.geekhub.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,4 +20,12 @@ public class Section {
     private UUID sectionId;
     private String sectionTitle;
     private String sectionSubtitle;
+
+    @JsonIgnore
+    @ManyToOne
+    private Convention convention;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
+    private List<Subsection> subsectionList;
 }
