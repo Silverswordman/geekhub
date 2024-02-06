@@ -31,16 +31,16 @@ public class Convention {
     private String logo;
     private String coverImage;
 
-//    @ManyToOne
-//    private Region region;
-//    @ManyToOne
-//    private Province province;
-//    @ManyToOne
-//    private City city;
+    @ManyToOne
+    private Region region;
+    @ManyToOne
+    private Province province;
+    @ManyToOne
+    private City city;
 
-    private String region;
-    private String province;
-    private String city;
+//    private String region;
+//    private String province;
+//    private String city;
 
     private String street;
     private String houseNumber;
