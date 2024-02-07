@@ -20,6 +20,7 @@ public class Subsection {
     @GeneratedValue
     private UUID subsectionId;
     private String subsectionTitle;
+    private String subsectionSubtitle;
     private String subsectionDescription;
     private String subsectionTime;
 

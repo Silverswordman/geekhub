@@ -5,6 +5,7 @@ import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Location.City;
 import giuliasilvestrini.geekhub.entities.Location.Province;
 import giuliasilvestrini.geekhub.entities.Location.Region;
+import giuliasilvestrini.geekhub.exceptions.DuplicateEntryException;
 import giuliasilvestrini.geekhub.exceptions.NotFoundException;
 import giuliasilvestrini.geekhub.payloads.ConventionDTO;
 import giuliasilvestrini.geekhub.repositories.ConventionDAO;
@@ -39,7 +40,7 @@ public class ConventionService {
     @Autowired
     Cloudinary cloudinary;
 
-    public Page<Convention> findAll(int size, int page, String order) {
+    public Page<Convention> findAll(int page, int size, String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(order));
         return conventionDAO.findAll(pageable);
     }
@@ -48,17 +49,44 @@ public class ConventionService {
         return conventionDAO.findById(conventionId).orElseThrow(() -> new NotFoundException(conventionId));
     }
 
+    public Convention findByTitle(String title) {
+        return conventionDAO.findByTitle(title).orElseThrow(() -> new NotFoundException("Convention not found with title: " + title));
+    }
+
     public Convention saveConvention(ConventionDTO conventionDTO) {
         Region region = regionService.findRegionByName(conventionDTO.region());
+        if (region == null) {
+            throw new NotFoundException("Not found:" + conventionDTO.region());
+        }
         Province province = provinceService.findProvinceByName(conventionDTO.province());
+        if (province == null) {
+            throw new NotFoundException("Not found:" + conventionDTO.province());
+        }
+
+        if (!province.getRegion().equals(region)) {
+            throw new IllegalArgumentException("Province " + province.getProvinceName() + " does not belong to region " + region.getRegionName());
+        }
+
         City city = cityService.findCityByName(conventionDTO.city());
+        if (city == null) {
+            throw new NotFoundException("Not found: " + conventionDTO.city());
+        }
+
+        if (!city.getProvince().equals(province)) {
+            throw new IllegalArgumentException("City " + city.getCityName() + " does not belong to province " + province.getProvinceName());
+        }
+
+        Optional<Convention> existingConventionOpt = conventionDAO.findByTitle(conventionDTO.title());
+        if (existingConventionOpt.isPresent()) {
+            throw new DuplicateEntryException("Convention with title " + conventionDTO.title() + " already exists.");
+        }
 
         Convention convention = new Convention();
         convention.setTitle(conventionDTO.title());
         convention.setStartDate(conventionDTO.startDate());
         convention.setEndDate(conventionDTO.endDate());
-        convention.setStreet(conventionDTO.street());
-        convention.setHouseNumber(conventionDTO.houseNumber());
+        convention.setSite(conventionDTO.site());
+        convention.setAddress(conventionDTO.address());
         convention.setRegion(region);
         convention.setProvince(province);
         convention.setCity(city);
@@ -67,9 +95,10 @@ public class ConventionService {
     }
 
 
-    public void deleteById(UUID conventionId) {
-        conventionDAO.deleteById(conventionId);
-    }
+
+    public void conventionDelete(UUID conventionId) {
+        Convention delete = this.findById(conventionId);
+        conventionDAO.delete(delete);}
 
     public Convention update(Convention convention) {
         if (conventionDAO.existsById(convention.getConventionId())) {

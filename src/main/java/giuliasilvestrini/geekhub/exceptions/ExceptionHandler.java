@@ -55,6 +55,14 @@ public class ExceptionHandler {
         return new ErrorsBody("Problema lato server.");
 
     }
+    // 409 Duplicate
+    @org.springframework.web.bind.annotation.ExceptionHandler(DuplicateEntryException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorPayloadList handleDuplicateEntry(DuplicateEntryException ex) {
+        List<String> errorsMessages = new ArrayList<>();
+        errorsMessages.add(ex.getMessage());
+        return new ErrorPayloadList("Duplicate entry", errorsMessages);
+    }
 
 }
 

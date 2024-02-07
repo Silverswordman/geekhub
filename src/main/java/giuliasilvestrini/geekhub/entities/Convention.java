@@ -28,9 +28,9 @@ public class Convention {
     private String title;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private String site;
     private String logo;
     private String coverImage;
-
     @ManyToOne
     private Region region;
     @ManyToOne
@@ -38,12 +38,8 @@ public class Convention {
     @ManyToOne
     private City city;
 
-//    private String region;
-//    private String province;
-//    private String city;
+    private String address;
 
-    private String street;
-    private String houseNumber;
 
     @JsonIgnore
     @OneToMany(mappedBy = "convention", cascade = CascadeType.ALL)

@@ -21,7 +21,6 @@ public class Section {
     private String sectionTitle;
     private String sectionSubtitle;
 
-    @JsonIgnore
     @ManyToOne
     private Convention convention;
 
