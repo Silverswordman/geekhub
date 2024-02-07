@@ -40,19 +40,13 @@ public class ProvinceService {
 
     public Province findBySigla(String sigla) {
         return provinceDAO.findBySigla(sigla)
-                .orElseThrow(() -> new NotFoundException("Province with code " + sigla + " not found"));
+                .orElseThrow(() -> new NotFoundException("Provincia " + sigla + " non trovata"));
     }
 
-
-    public Province setRegion(Province province, long regionCode) {
-        Region region = regionService.findByCode(regionCode);
-        province.setRegion(region);
-        return province;
-    }
 
     public Province findProvinceByName(String provinceName) {
         return provinceDAO.findByProvinceName(provinceName)
-                .orElseThrow(() -> new NotFoundException("Province with name " + provinceName + " not found"));
+                .orElseThrow(() -> new NotFoundException("Provincia " + provinceName + " non trovata"));
     }
 }
 

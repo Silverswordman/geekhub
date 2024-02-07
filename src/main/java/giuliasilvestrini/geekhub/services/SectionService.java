@@ -27,25 +27,26 @@ public class SectionService {
         return sectionDAO.findAllByConvention(convention, pageable);
     }
 
-    public Section findById(UUID sectionId) {
+    public Section findById(Long sectionId) {
         return sectionDAO.findById(sectionId).orElseThrow(() -> new NotFoundException(sectionId));
     }
 
     public Section saveSection(SectionDTO sectionDTO, String conventionTitle) {
         Convention convention = conventionService.findByTitle(conventionTitle);
         if (convention == null) {
-            throw new NotFoundException("Convention not found with title: " + conventionTitle);
+            throw new NotFoundException("Questa fiera non è stata trovata: " + conventionTitle);
         }
         Section section = new Section();
         section.setSectionTitle(sectionDTO.sectionTitle());
         section.setSectionSubtitle(sectionDTO.sectionSubtitle());
+        section.setSectionImage(sectionDTO.sectionImage());
         section.setConvention(convention);
         convention.getSectionList().add(section);
         conventionService.update(convention);
         return sectionDAO.save(section);
     }
 
-    public void sectionDelete(UUID sectionId) {
+    public void sectionDelete(Long sectionId) {
         Section delete = this.findById(sectionId);
         sectionDAO.delete(delete);
     }
@@ -54,7 +55,11 @@ public class SectionService {
         if (sectionDAO.existsById(section.getSectionId())) {
             return sectionDAO.save(section);
         } else {
-            throw new IllegalArgumentException("Section with ID " + section.getSectionId() + " does not exist.");
+            throw new IllegalArgumentException("Sezione con ID " + section.getSectionId() + " non esiste");
         }
+    }
+
+    public Section findBySectionTitle(String sectionTitle) {
+        return sectionDAO.findBySectionTitle(sectionTitle).orElseThrow(() -> new NotFoundException("Convention not found with title: " + sectionTitle));
     }
 }

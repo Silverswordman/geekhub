@@ -17,9 +17,10 @@ import java.util.UUID;
 public class Section {
     @Id
     @GeneratedValue
-    private UUID sectionId;
+    private long sectionId;
     private String sectionTitle;
     private String sectionSubtitle;
+    private String sectionImage;
 
     @ManyToOne
     private Convention convention;

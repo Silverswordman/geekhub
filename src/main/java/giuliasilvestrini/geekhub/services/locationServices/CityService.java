@@ -34,7 +34,7 @@ public class CityService {
 
     public City findCityByName(String cityName) {
         return cityDAO.findByCityName(cityName)
-                .orElseThrow(() -> new NotFoundException("Province with name " + cityName + " not found"));
+                .orElseThrow(() -> new NotFoundException("Città with name " + cityName + " not found"));
     }
 }
 

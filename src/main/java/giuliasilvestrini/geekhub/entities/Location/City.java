@@ -22,7 +22,7 @@ public class City {
     @Column(name = "city_code")
     private int cityCode;
 
-    @Column(name = "name")
+
     private String cityName;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -32,10 +32,10 @@ public class ImportCSV {
 
     }
 
-    public void importDataFromCSV(String regionFilename, String provinceFilename,  String cityFilename) {
-//       importRegionsFromCSV(regionFilename);
+    public void importDataFromCSV(String regionFilename, String provinceFilename, String cityFilename) {
+//        importRegionsFromCSV(regionFilename);
 //        importProvincesFromCSV(provinceFilename);
-//       importCitiesFromCSV(cityFilename);
+//        importCitiesFromCSV(cityFilename);
     }
 
 
@@ -61,7 +61,7 @@ public class ImportCSV {
 
     private void importProvincesFromCSV(String filename) {
         try (FileReader reader = new FileReader(filename);
-             CSVParser csvParser = CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader().parse(reader)){
+             CSVParser csvParser = CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader().parse(reader)) {
 
             for (CSVRecord record : csvParser) {
                 String sigla = record.get("sigla_provincia");
@@ -101,6 +101,7 @@ public class ImportCSV {
                     city.setProvince(province);
                     city.setCityCode(cityCode);
                     city.setCityName(cityName);
+//                    System.out.println(city);
                     cityService.saveCity(city);
                 }
             }

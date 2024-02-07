@@ -56,12 +56,12 @@ public class RegionService {
     public Region findRegionByName(String regionName) {
         // Implementa la logica per trovare una regione dal nome
         return regionDAO.findByRegionName(regionName)
-                .orElseThrow(() -> new NotFoundException("Region with name " + regionName + " not found"));
+                .orElseThrow(() -> new NotFoundException("Regione " + regionName + " non trovata"));
     }
 
     @Transactional(readOnly = true)
     public Region findByCode(long code) {
-        return regionDAO.findByRegionCode(code).orElseThrow(() -> new NotFoundException("Region with code " + code + " not found"));
+        return regionDAO.findByRegionCode(code).orElseThrow(() -> new NotFoundException("Regione " + code + " non trovata"));
     }
 
 

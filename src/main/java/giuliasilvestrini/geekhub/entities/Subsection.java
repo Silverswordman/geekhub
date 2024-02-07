@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -18,9 +17,8 @@ import java.util.UUID;
 public class Subsection {
     @Id
     @GeneratedValue
-    private UUID subsectionId;
+    private long subsectionId;
     private String subsectionTitle;
-    private String subsectionSubtitle;
     private String subsectionDescription;
     private String subsectionTime;
 

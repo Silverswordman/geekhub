@@ -8,11 +8,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
+
 
 @Repository
-public interface SectionDAO extends JpaRepository<Section, UUID> {
+public interface SectionDAO extends JpaRepository<Section,Long> {
     Page<Section> findAllByConvention(Convention convention, Pageable pageable);
+    Optional<Section> findBySectionTitle(String sectionTitle);
 
 }
 

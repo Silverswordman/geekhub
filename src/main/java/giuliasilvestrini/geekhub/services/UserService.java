@@ -50,7 +50,7 @@ public class UserService {
     }
 
     public User findByEmail(String email){
-        return userDao.findByEmail(email).orElseThrow(()-> new NotFoundException("Utente con email " + email + " non trovato..."));
+        return userDao.findByEmail(email).orElseThrow(()-> new NotFoundException("Utente con email " + email + " non trovato"));
     }
 
     public  String uploadImage(MultipartFile file, UUID userId) throws IOException {

@@ -31,7 +31,6 @@ public class ConventionController {
     SectionService sectionService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
     public Page<Convention> getConventions(@RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size,
                                            @RequestParam(defaultValue = "conventionId") String order) {
@@ -41,20 +40,45 @@ public class ConventionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
     public Convention saveNewConvention(@RequestBody ConventionDTO payload) {
         return conventionService.saveConvention(payload);
     }
 
 
     @GetMapping("/{conventionId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     @ResponseStatus(HttpStatus.OK)
     public Convention singleConvention(@PathVariable UUID conventionId) {
         return conventionService.findById(conventionId);
     }
 
-    @PostMapping("/{conventionId}/sections")
-    @PreAuthorize("hasAuthority('ADMIN')")
+
+
+    @GetMapping("/{conventionId}/sec")
+
+    public Page<Section> getSections(@PathVariable UUID conventionId,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "6") int size,
+                                     @RequestParam(defaultValue = "sectionTitle") String order) {
+
+        Convention convention = conventionService.findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention not found with ID: " + conventionId);
+        }
+        return sectionService.findAll(convention, page, size, order);
+    }
+
+
+    @GetMapping("/{conventionId}/sec/{sectionId}")
+
+    @ResponseStatus(HttpStatus.OK)
+    public Section singleSection(@PathVariable Long sectionId) {
+        return sectionService.findById(sectionId);
+    }
+
+    @PostMapping("/{conventionId}/sec")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
     @ResponseStatus(HttpStatus.CREATED)
     public Section saveSectionForConvention(@PathVariable UUID conventionId, @RequestBody SectionDTO sectionDTO) {
         Convention convention = conventionService.findById(conventionId);
@@ -62,21 +86,6 @@ public class ConventionController {
             throw new NotFoundException("Convention not found with ID: " + conventionId);
         }
         return sectionService.saveSection(sectionDTO, convention.getTitle());
-    }
-
-
-    @GetMapping("/{conventionId}/sections")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public Page<Section> getSections(@PathVariable UUID conventionId,
-                                     @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "6") int size,
-                                     @RequestParam(defaultValue = "sectionId") String order) {
-
-        Convention convention = conventionService.findById(conventionId);
-        if (convention == null) {
-            throw new NotFoundException("Convention not found with ID: " + conventionId);
-        }
-        return sectionService.findAll(convention, page, size, order);
     }
 
 

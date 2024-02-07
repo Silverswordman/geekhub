@@ -24,7 +24,6 @@ public class Province {
 
 
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     private Region region;
 
