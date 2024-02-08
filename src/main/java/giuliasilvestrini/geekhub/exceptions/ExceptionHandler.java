@@ -64,5 +64,6 @@ public class ExceptionHandler {
         return new ErrorPayloadList("Duplicate entry", errorsMessages);
     }
 
-}
+    }
+
 
