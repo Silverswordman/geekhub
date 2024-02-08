@@ -2,6 +2,7 @@ package giuliasilvestrini.geekhub.services;
 
 import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Section;
+import giuliasilvestrini.geekhub.exceptions.DuplicateEntryException;
 import giuliasilvestrini.geekhub.exceptions.NotFoundException;
 import giuliasilvestrini.geekhub.payloads.SectionDTO;
 import giuliasilvestrini.geekhub.repositories.SectionDAO;
@@ -36,6 +37,11 @@ public class SectionService {
         if (convention == null) {
             throw new NotFoundException("Questa fiera non è stata trovata: " + conventionTitle);
         }
+
+        Section existingSection = sectionDAO.findBySectionTitleAndConvention(sectionDTO.sectionTitle(), convention);
+        if (existingSection != null) {
+            throw new DuplicateEntryException("Una sezione con lo stesso titolo esiste già in questa fiera.");        }
+
         Section section = new Section();
         section.setSectionTitle(sectionDTO.sectionTitle());
         section.setSectionSubtitle(sectionDTO.sectionSubtitle());

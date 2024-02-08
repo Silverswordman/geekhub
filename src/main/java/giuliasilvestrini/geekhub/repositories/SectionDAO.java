@@ -14,6 +14,8 @@ import java.util.Optional;
 public interface SectionDAO extends JpaRepository<Section,Long> {
     Page<Section> findAllByConvention(Convention convention, Pageable pageable);
     Optional<Section> findBySectionTitle(String sectionTitle);
+    Section findBySectionTitleAndConvention(String sectionTitle, Convention convention);
+
 
 }
 

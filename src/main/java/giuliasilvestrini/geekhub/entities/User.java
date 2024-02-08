@@ -30,6 +30,8 @@ public class User implements UserDetails {
     private String avatar;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToOne(mappedBy = "user")
+    private Request request;
 
 
     @Override

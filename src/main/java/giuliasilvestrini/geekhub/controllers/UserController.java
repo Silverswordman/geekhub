@@ -1,6 +1,9 @@
 package giuliasilvestrini.geekhub.controllers;
 
+import giuliasilvestrini.geekhub.entities.Request;
 import giuliasilvestrini.geekhub.entities.User;
+import giuliasilvestrini.geekhub.payloads.RequestDTO;
+import giuliasilvestrini.geekhub.services.RequestService;
 import giuliasilvestrini.geekhub.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +20,8 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    private RequestService requestService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -79,8 +84,45 @@ public class UserController {
 
     @PatchMapping("/me/upload")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
     public String uploadAvatarPersonal(@RequestParam("image") MultipartFile file, @AuthenticationPrincipal User userId) throws Exception {
         return userService.uploadImage(file, userId.getUserId());
     }
+
+
+
+    // invio richiesta user eventplanner to admin
+    @PostMapping("/me/sendRequest")
+    @PreAuthorize("hasAuthority('USER')")
+    public void sendRequest(@AuthenticationPrincipal User currentUser, @RequestBody RequestDTO requestDTO) {
+        String email = currentUser.getEmail();
+        String name = currentUser.getName();
+        String message = requestDTO.message();
+
+        requestService.saveRequest(email, name, message);
+    }
+
+// menu requests solo per admins
+
+    @GetMapping("/requests")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Page<Request> getRequestsPage() {
+        return requestService.getRequestsPage(0, 10);
+    }
+
+
+    // Accetta una richiesta
+    @PutMapping("/requests/{requestId}/accept")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public User acceptRequest(@PathVariable UUID requestId) {
+        return requestService.acceptRequest(requestId);
+    }
+
+    // Rifiuta una richiesta
+    @DeleteMapping("/requests/{requestId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public void declineRequest(@PathVariable UUID requestId) {
+        requestService.declineRequest(requestId);
+    }
+
 }
