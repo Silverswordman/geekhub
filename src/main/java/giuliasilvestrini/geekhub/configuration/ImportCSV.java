@@ -101,7 +101,7 @@ public class ImportCSV {
                     city.setProvince(province);
                     city.setCityCode(cityCode);
                     city.setCityName(cityName);
-//                    System.out.println(city);
+//                    System.out.println("città caricate");
                     cityService.saveCity(city);
                 }
             }

@@ -45,13 +45,21 @@ public class ConventionController {
     }
 
 
+
+
+    @PutMapping("/{conventionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public Convention updateConvention(@PathVariable UUID conventionId, @RequestBody ConventionDTO conventionDTO, @AuthenticationPrincipal User user) {
+        System.out.println("User UUID: " + user.getUserId());
+        System.out.println("Creator UUID: " + conventionService.findById(conventionId).getCreator().getUserId());
+        return conventionService.updateConvention(conventionId, conventionDTO, user);
+    }
     @GetMapping("/{conventionId}")
 
     @ResponseStatus(HttpStatus.OK)
     public Convention singleConvention(@PathVariable UUID conventionId) {
         return conventionService.findById(conventionId);
     }
-
 
 
     @GetMapping("/{conventionId}/sec")
@@ -70,11 +78,11 @@ public class ConventionController {
 
 
     @GetMapping("/{conventionId}/sec/{sectionId}")
-
     @ResponseStatus(HttpStatus.OK)
     public Section singleSection(@PathVariable Long sectionId) {
         return sectionService.findById(sectionId);
     }
+
 
     @PostMapping("/{conventionId}/sec")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")

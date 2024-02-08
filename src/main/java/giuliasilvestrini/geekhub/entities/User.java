@@ -1,5 +1,6 @@
 package giuliasilvestrini.geekhub.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import giuliasilvestrini.geekhub.entities.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,7 +35,8 @@ public class User implements UserDetails {
     private Request request;
 
     // Relazione OneToMany: Utente come creatore di eventi
-    @OneToMany(mappedBy = "creator")
+    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
+@JsonIgnore
     private List<Convention> createdConventions;
 
 

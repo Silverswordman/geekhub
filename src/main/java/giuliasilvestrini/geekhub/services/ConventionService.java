@@ -6,6 +6,8 @@ import giuliasilvestrini.geekhub.entities.Location.City;
 import giuliasilvestrini.geekhub.entities.Location.Province;
 import giuliasilvestrini.geekhub.entities.Location.Region;
 import giuliasilvestrini.geekhub.entities.User;
+import giuliasilvestrini.geekhub.entities.enums.Role;
+import giuliasilvestrini.geekhub.exceptions.AccessDeniedException;
 import giuliasilvestrini.geekhub.exceptions.DuplicateEntryException;
 import giuliasilvestrini.geekhub.exceptions.NotFoundException;
 import giuliasilvestrini.geekhub.payloads.ConventionDTO;
@@ -94,6 +96,37 @@ public class ConventionService {
         convention.setCity(city);
 
         return conventionDAO.save(convention);
+    }
+
+    public Convention updateConvention(UUID conventionId, ConventionDTO conventionDTO, User user) {
+        Convention existingConvention = findById(conventionId);
+        System.out.println("Existing Convention Creator UserID: " + existingConvention.getCreator().getUserId());
+
+        if (user.getRole() == Role.ADMIN || (user.getRole() == Role.EVENTPLANNER && existingConvention.getCreator().getUserId().equals(user.getUserId()))) {
+            Region region = regionService.findRegionByName(conventionDTO.region());
+            if (region == null) {
+                throw new NotFoundException("Not found:" + conventionDTO.region());
+            }
+            Province province = provinceService.findProvinceByName(conventionDTO.province());
+            if (province == null) {
+                throw new NotFoundException("Not found:" + conventionDTO.province());
+            }
+            City city = cityService.findCityByName(conventionDTO.city());
+            if (city == null) {
+                throw new NotFoundException("Not found: " + conventionDTO.city());
+            }
+            existingConvention.setTitle(conventionDTO.title());
+            existingConvention.setStartDate(conventionDTO.startDate());
+            existingConvention.setEndDate(conventionDTO.endDate());
+            existingConvention.setSite(conventionDTO.site());
+            existingConvention.setAddress(conventionDTO.address());
+            existingConvention.setRegion(region);
+            existingConvention.setProvince(province);
+            existingConvention.setCity(city);
+            return conventionDAO.save(existingConvention);
+        } else {
+            throw new AccessDeniedException("Only ADMIN or the creator EVENTPLANNER are allowed to update conventions.");
+        }
     }
 
 
