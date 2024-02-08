@@ -33,6 +33,12 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user")
     private Request request;
 
+    // Relazione OneToMany: Utente come creatore di eventi
+    @OneToMany(mappedBy = "creator")
+    private List<Convention> createdConventions;
+
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

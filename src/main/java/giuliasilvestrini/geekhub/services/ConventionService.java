@@ -5,6 +5,7 @@ import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Location.City;
 import giuliasilvestrini.geekhub.entities.Location.Province;
 import giuliasilvestrini.geekhub.entities.Location.Region;
+import giuliasilvestrini.geekhub.entities.User;
 import giuliasilvestrini.geekhub.exceptions.DuplicateEntryException;
 import giuliasilvestrini.geekhub.exceptions.NotFoundException;
 import giuliasilvestrini.geekhub.payloads.ConventionDTO;
@@ -53,7 +54,7 @@ public class ConventionService {
         return conventionDAO.findByTitle(title).orElseThrow(() -> new NotFoundException("Convention not found with title: " + title));
     }
 
-    public Convention saveConvention(ConventionDTO conventionDTO) {
+    public Convention saveConvention(ConventionDTO conventionDTO, User user) {
         Region region = regionService.findRegionByName(conventionDTO.region());
         if (region == null) {
             throw new NotFoundException("Not found:" + conventionDTO.region());
@@ -87,6 +88,7 @@ public class ConventionService {
         convention.setEndDate(conventionDTO.endDate());
         convention.setSite(conventionDTO.site());
         convention.setAddress(conventionDTO.address());
+        convention.setCreator(user);
         convention.setRegion(region);
         convention.setProvince(province);
         convention.setCity(city);

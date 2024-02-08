@@ -11,11 +11,10 @@ import giuliasilvestrini.geekhub.services.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -41,8 +40,8 @@ public class ConventionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
-    public Convention saveNewConvention(@RequestBody ConventionDTO payload) {
-        return conventionService.saveConvention(payload);
+    public Convention saveNewConvention(@RequestBody ConventionDTO payload, @AuthenticationPrincipal User user) {
+        return conventionService.saveConvention(payload, user);
     }
 
 

@@ -19,17 +19,17 @@ import java.util.UUID;
 @Service
 public class UserService {
     @Autowired
-    UserDAO userDao;
+    UserDAO userDAO;
     @Autowired
     Cloudinary cloudinary;
 
     public Page<User> findAll(int size, int page, String order){
         Pageable pageable= PageRequest.of(size,page, Sort.by(order));
-        return userDao.findAll(pageable);
+        return userDAO.findAll(pageable);
     }
 
     public User findById(UUID userId){
-        return userDao.findById(userId).orElseThrow(()->new NotFoundException(userId));
+        return userDAO.findById(userId).orElseThrow(()->new NotFoundException(userId));
     }
 
     public User userUpdate(UUID userId,User body){
@@ -40,24 +40,24 @@ public class UserService {
         update.setPassword(body.getPassword());
         update.setAvatar(body.getAvatar());
         update.setRole(body.getRole());
-        return userDao.save(update);
+        return userDAO.save(update);
     }
 
 
     public void userDelete(UUID userId){
         User delete=this.findById(userId);
-        userDao.delete(delete);
+        userDAO.delete(delete);
     }
 
     public User findByEmail(String email){
-        return userDao.findByEmail(email).orElseThrow(()-> new NotFoundException("Utente con email " + email + " non trovato"));
+        return userDAO.findByEmail(email).orElseThrow(()-> new NotFoundException("Utente con email " + email + " non trovato"));
     }
 
     public  String uploadImage(MultipartFile file, UUID userId) throws IOException {
         User found = this.findById(userId);
         String url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
         found.setAvatar(url);
-        userDao.save(found);
+        userDAO.save(found);
         return url;
     }
 }

@@ -40,8 +40,11 @@ public class Convention {
 
     private String address;
 
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "convention", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "convention")
     private List<Section> sectionList;
 }
