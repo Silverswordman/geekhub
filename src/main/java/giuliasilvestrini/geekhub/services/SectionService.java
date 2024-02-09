@@ -1,5 +1,7 @@
 package giuliasilvestrini.geekhub.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Section;
 import giuliasilvestrini.geekhub.entities.Subsection;
@@ -16,7 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -26,6 +30,8 @@ public class SectionService {
 
     @Autowired
     ConventionService conventionService;
+    @Autowired
+    Cloudinary cloudinary;
 
     public Page<Section> findAll(Convention convention, int page, int size, String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(order));
@@ -102,6 +108,22 @@ public class SectionService {
         }
         section.getSubsectionList().add(subsection);
         return sectionDAO.save(section);
+    }
+
+
+
+    public String uploadSectionImage(MultipartFile file, Long sectionId, User user) throws IOException {
+        Section section = findById(sectionId);
+        if (section == null) {
+            throw new NotFoundException("Convention not found with ID: " + sectionId);
+        }
+        if (!user.getRole().equals(Role.ADMIN) && !section.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Solo l admin è il creatore di questa convention possono modificare sezioni");
+        }
+        String url = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+        section.setSectionImage(url);
+        sectionDAO.save(section);
+        return url;
     }
 
     public Section findBySectionTitle(String sectionTitle) {

@@ -153,5 +153,12 @@ public class ConventionController {
         Section section = sectionService.updateSection(sectionId, sectionDTO, user);
         return section;
     }
+
+    @PatchMapping("/{conventionId}/sec/{sectionId}/uploadImage")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public String uploadSectionImage(@RequestParam("image") MultipartFile file, @PathVariable Long sectionId, @AuthenticationPrincipal User userId) throws Exception {
+        return sectionService.uploadSectionImage(file, sectionId, userId);
+    }
 }
 
