@@ -91,7 +91,7 @@ public class ConventionController {
 
         Convention convention = conventionService.findById(conventionId);
         if (convention == null) {
-            throw new NotFoundException("Convention not found with ID: " + conventionId);
+            throw new NotFoundException("Convention non trovata " + conventionId);
         }
         return sectionService.findAll(convention, page, size, order);
     }
@@ -111,10 +111,35 @@ public class ConventionController {
     public Section saveSectionForConvention(@PathVariable UUID conventionId, @RequestBody SectionDTO sectionDTO, @AuthenticationPrincipal User user) {
         Convention convention = conventionService.findById(conventionId);
         if (convention == null) {
-            throw new NotFoundException("Convention not found with ID: " + conventionId);
+            throw new NotFoundException("Convention non trovata " + conventionId);
         }
         return sectionService.saveSection(sectionDTO, convention.getConventionId(), user);
     }
 
+
+
+    @DeleteMapping("/{conventionId}/sec/{sectionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public void deleteSection(@PathVariable UUID conventionId, @PathVariable Long sectionId, @AuthenticationPrincipal User user) {
+        Convention convention = conventionService.findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention non trovata " + conventionId);
+        }
+
+        sectionService.sectionDelete(sectionId, user);
+    }
+
+
+    @PutMapping("/{conventionId}/sec/{sectionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public Section updateSection(@PathVariable UUID conventionId, @PathVariable Long sectionId, @RequestBody SectionDTO sectionDTO, @AuthenticationPrincipal User user) {
+        Convention convention = conventionService.findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention non trovata " + conventionId);
+        }
+
+        Section section = sectionService.updateSection(sectionId, sectionDTO, user);
+        return section;
+    }
 }
 

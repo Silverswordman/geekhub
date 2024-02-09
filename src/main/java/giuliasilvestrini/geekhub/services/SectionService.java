@@ -2,6 +2,7 @@ package giuliasilvestrini.geekhub.services;
 
 import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Section;
+import giuliasilvestrini.geekhub.entities.Subsection;
 import giuliasilvestrini.geekhub.entities.User;
 import giuliasilvestrini.geekhub.entities.enums.Role;
 import giuliasilvestrini.geekhub.exceptions.AccessDeniedException;
@@ -61,17 +62,46 @@ public class SectionService {
     }
 
 
-    public void sectionDelete(Long sectionId) {
-        Section delete = this.findById(sectionId);
-        sectionDAO.delete(delete);
+    public void sectionDelete(Long sectionId, User user) {
+        Section section = findById(sectionId);
+        if (section == null) {
+            throw new NotFoundException("Section not found with ID: " + sectionId);
+        }
+
+        Convention convention = section.getConvention();
+        if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Only ADMIN or the creator of the convention are allowed to delete sections from this convention.");
+        }
+
+        sectionDAO.delete(section);
     }
 
-    public Section update(Section section) {
-        if (sectionDAO.existsById(section.getSectionId())) {
-            return sectionDAO.save(section);
-        } else {
-            throw new IllegalArgumentException("Sezione con ID " + section.getSectionId() + " non esiste");
+
+    public Section updateSection(Long sectionId, SectionDTO sectionDTO, User user) {
+        Section section = findById(sectionId);
+        if (section == null) {
+            throw new NotFoundException("Sezione non trovata " + sectionId + "" + section.getSectionTitle());
         }
+
+        Convention convention = section.getConvention();
+        if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Solo l admin è il creatore di questa convention possono modificare sezioni");
+        }
+
+        section.setSectionTitle(sectionDTO.sectionTitle());
+        section.setSectionSubtitle(sectionDTO.sectionSubtitle());
+        section.setSectionImage(sectionDTO.sectionImage());
+
+        return sectionDAO.save(section);
+    }
+
+    public Section addSubSectionToSection(Long sectionId, Subsection subsection) {
+        Section section = findById(sectionId);
+        if (section == null) {
+            throw new NotFoundException("Convention not found with ID: " + sectionId);
+        }
+        section.getSubsectionList().add(subsection);
+        return sectionDAO.save(section);
     }
 
     public Section findBySectionTitle(String sectionTitle) {

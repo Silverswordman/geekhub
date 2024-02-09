@@ -1,6 +1,11 @@
 package giuliasilvestrini.geekhub.controllers;
+
+import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Section;
 import giuliasilvestrini.geekhub.entities.Subsection;
+import giuliasilvestrini.geekhub.entities.User;
+import giuliasilvestrini.geekhub.entities.enums.Role;
+import giuliasilvestrini.geekhub.exceptions.AccessDeniedException;
 import giuliasilvestrini.geekhub.exceptions.NotFoundException;
 import giuliasilvestrini.geekhub.payloads.SubsectionDTO;
 import giuliasilvestrini.geekhub.services.ConventionService;
@@ -12,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -32,7 +38,7 @@ public class SectionController {
 
 
     @GetMapping
-    public Page<Subsection> getSubsections( @PathVariable long sectionId,
+    public Page<Subsection> getSubsections(@PathVariable long sectionId,
                                            @RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "6") int size,
                                            @RequestParam(defaultValue = "subsectionTitle") String order) {
@@ -40,7 +46,7 @@ public class SectionController {
 
         Section section = sectionService.findById(sectionId);
         if (section == null) {
-            throw new NotFoundException("Sezione non trovata " + sectionId);
+            throw new NotFoundException("Sezione non trovata con ID: " + sectionId +" " +  section.getSectionTitle());
         }
         return subsectionService.findAll(section, page, size, order);
     }
@@ -48,17 +54,67 @@ public class SectionController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Subsection saveSubectionForSection(@PathVariable long sectionId, @RequestBody SubsectionDTO subsectionDTO) {
-        logger.info("Chiamata POST per salvare la subsection per la sezione con ID {}", sectionId);
-
-        // Logga i parametri ricevuti
-        logger.info("subsectionDTO: {}", subsectionDTO.toString());
-
+    public Subsection saveSubsectionForSection(@PathVariable UUID conventionId, @PathVariable Long sectionId, @RequestBody SubsectionDTO subsectionDTO, @AuthenticationPrincipal User user) {
         Section section = sectionService.findById(sectionId);
         if (section == null) {
-            throw new NotFoundException("Sezione non trovata con ID: " + sectionId);
+            throw new NotFoundException("Sezione non trovata con ID: " + sectionId +" " +  section.getSectionTitle());
         }
-        return subsectionService.saveSubsection(subsectionDTO, section.getSectionTitle());
+
+        Convention convention = conventionService.findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention non trovata " + conventionId + " " + convention.getTitle());
+        }
+        if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Solo ADMIN o il creatore della convention sono autorizzati ad aggiungere sottosezioni.");
+        }
+        return subsectionService.saveSubsection(subsectionDTO, sectionId, user);
+    }
+
+
+    @PutMapping("{subsectionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public Subsection updateSubsection(@PathVariable UUID conventionId, @PathVariable Long sectionId, @PathVariable Long subsectionId, @RequestBody SubsectionDTO subsectionDTO, @AuthenticationPrincipal User user) {
+        Section section = sectionService.findById(sectionId);
+        if (section == null) {
+            throw new NotFoundException("Sezione non trovata con ID: " + sectionId + " " + section.getSectionTitle());
+        }
+        Convention convention = conventionService.findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention non trovata " + conventionId + " " + convention.getTitle());
+        }
+        Subsection subsection = subsectionService.findById(subsectionId);
+        if (subsection == null) {
+            throw new NotFoundException("Sottosezione non trovata con ID: " + subsectionId + "" + subsection.getSubsectionTitle());
+        }
+        if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Solo ADMIN o il creatore della convention sono autorizzati ad aggiornare sottosezioni.");
+        }
+        return subsectionService.updateSubsection(subsectionId, subsectionDTO, user);
+    }
+
+    @DeleteMapping("{subsectionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public void deleteSubsection(@PathVariable UUID conventionId, @PathVariable Long sectionId, @PathVariable Long subsectionId, @AuthenticationPrincipal User user) {
+        Section section = sectionService.findById(sectionId);
+        if (section == null) {
+            throw new NotFoundException("Sezione non trovata con ID: " + sectionId + " " + section.getSectionTitle());
+        }
+
+        Convention convention = conventionService.findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention non trovata " + conventionId + " " + convention.getTitle());
+        }
+
+        Subsection subsection = subsectionService.findById(subsectionId);
+        if (subsection == null) {
+            throw new NotFoundException("Sottosezione non trovata con ID: " + subsectionId);
+        }
+
+        if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Solo ADMIN o il creatore della convention sono autorizzati ad eliminare sottosezioni.");
+        }
+
+        subsectionService.subsectionDelete(subsectionId, user);
     }
 }
 

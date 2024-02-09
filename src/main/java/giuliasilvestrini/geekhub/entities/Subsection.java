@@ -25,4 +25,7 @@ public class Subsection {
     @JsonIgnore
     @ManyToOne
     private Section section;
+
+    @ManyToOne
+    private User creator;
 }

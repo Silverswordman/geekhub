@@ -136,8 +136,7 @@ public class ConventionService {
             throw new NotFoundException("Convention not found with ID: " + conventionId);
         }
 
-        // Aggiungi la nuova sezione alla lista delle sezioni della convenzione
-        convention.getSectionList().add(section);
+       convention.getSectionList().add(section);
 
         return conventionDAO.save(convention);
     }
