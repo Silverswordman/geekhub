@@ -12,8 +12,8 @@ public record ConventionDTO(
         LocalDateTime startDate,
         @NotEmpty(message = "deve avere obbligatoriamente una data di fine")
         LocalDateTime endDate,
-
-
+        String logo,
+        String coverImage,
         String site,
         @NotNull(message = "la fiera deve avere un indirizzo")
         String address,

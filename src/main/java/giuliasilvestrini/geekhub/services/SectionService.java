@@ -52,7 +52,7 @@ public class SectionService {
         Section section = new Section();
         section.setSectionTitle(sectionDTO.sectionTitle());
         section.setSectionSubtitle(sectionDTO.sectionSubtitle());
-        section.setSectionImage(sectionDTO.sectionImage());
+        section.setSectionImage("https://placekitten.com/100/100");
         section.setConvention(convention);
         section.setCreator(user);
 
@@ -90,7 +90,7 @@ public class SectionService {
 
         section.setSectionTitle(sectionDTO.sectionTitle());
         section.setSectionSubtitle(sectionDTO.sectionSubtitle());
-        section.setSectionImage(sectionDTO.sectionImage());
+
 
         return sectionDAO.save(section);
     }

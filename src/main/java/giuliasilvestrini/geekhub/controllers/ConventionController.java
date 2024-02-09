@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -47,8 +48,6 @@ public class ConventionController {
     }
 
 
-
-
     @PutMapping("/{conventionId}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
     public Convention updateConvention(@PathVariable UUID conventionId, @RequestBody ConventionDTO conventionDTO, @AuthenticationPrincipal User user) {
@@ -56,6 +55,7 @@ public class ConventionController {
         System.out.println("Creator UUID: " + conventionService.findById(conventionId).getCreator().getUserId());
         return conventionService.updateConvention(conventionId, conventionDTO, user);
     }
+
     @GetMapping("/{conventionId}")
 
     @ResponseStatus(HttpStatus.OK)
@@ -63,6 +63,20 @@ public class ConventionController {
         return conventionService.findById(conventionId);
     }
 
+
+    @PatchMapping("/{conventionId}/uploadLogo")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public String uploadLogo(@RequestParam("image") MultipartFile file, @PathVariable UUID conventionId, @AuthenticationPrincipal User userId) throws Exception {
+        return conventionService.uploadLogo(file, conventionId, userId);
+    }
+
+    @PatchMapping("/{conventionId}/uploadCover")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public String uploadCover(@RequestParam("image") MultipartFile file, @PathVariable UUID conventionId, @AuthenticationPrincipal User userId) throws Exception {
+        return conventionService.uploadCover(file, conventionId, userId);
+    }
 
 
     @DeleteMapping("/{conventionId}")
@@ -104,7 +118,6 @@ public class ConventionController {
     }
 
 
-
     @PostMapping("/{conventionId}/sec")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
     @ResponseStatus(HttpStatus.CREATED)
@@ -115,7 +128,6 @@ public class ConventionController {
         }
         return sectionService.saveSection(sectionDTO, convention.getConventionId(), user);
     }
-
 
 
     @DeleteMapping("/{conventionId}/sec/{sectionId}")
