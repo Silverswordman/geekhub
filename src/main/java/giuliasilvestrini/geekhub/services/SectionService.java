@@ -2,6 +2,9 @@ package giuliasilvestrini.geekhub.services;
 
 import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Section;
+import giuliasilvestrini.geekhub.entities.User;
+import giuliasilvestrini.geekhub.entities.enums.Role;
+import giuliasilvestrini.geekhub.exceptions.AccessDeniedException;
 import giuliasilvestrini.geekhub.exceptions.DuplicateEntryException;
 import giuliasilvestrini.geekhub.exceptions.NotFoundException;
 import giuliasilvestrini.geekhub.payloads.SectionDTO;
@@ -19,7 +22,7 @@ import java.util.UUID;
 public class SectionService {
     @Autowired
     private SectionDAO sectionDAO;
-    
+
     @Autowired
     ConventionService conventionService;
 
@@ -32,25 +35,31 @@ public class SectionService {
         return sectionDAO.findById(sectionId).orElseThrow(() -> new NotFoundException(sectionId));
     }
 
-    public Section saveSection(SectionDTO sectionDTO, String conventionTitle) {
-        Convention convention = conventionService.findByTitle(conventionTitle);
+    public Section saveSection(SectionDTO sectionDTO, UUID conventionId, User user) {
+        Convention convention = conventionService.findById(conventionId);
         if (convention == null) {
-            throw new NotFoundException("Questa fiera non è stata trovata: " + conventionTitle);
+            throw new NotFoundException("Convention non trovata " + conventionId);
         }
-
+        if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Solo l admin è il creatore di questa convention possono aggiungere sezioni");
+        }
         Section existingSection = sectionDAO.findBySectionTitleAndConvention(sectionDTO.sectionTitle(), convention);
         if (existingSection != null) {
-            throw new DuplicateEntryException("Una sezione con lo stesso titolo esiste già in questa fiera.");        }
+            throw new DuplicateEntryException("Esiste già una sezione con lo stesso nome");
+        }
 
         Section section = new Section();
         section.setSectionTitle(sectionDTO.sectionTitle());
         section.setSectionSubtitle(sectionDTO.sectionSubtitle());
         section.setSectionImage(sectionDTO.sectionImage());
         section.setConvention(convention);
-        convention.getSectionList().add(section);
-        conventionService.update(convention);
+        section.setCreator(user);
+
+        conventionService.addSectionToConvention(conventionId, section);
+
         return sectionDAO.save(section);
     }
+
 
     public void sectionDelete(Long sectionId) {
         Section delete = this.findById(sectionId);

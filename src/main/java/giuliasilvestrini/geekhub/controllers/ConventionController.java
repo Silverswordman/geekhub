@@ -3,6 +3,8 @@ package giuliasilvestrini.geekhub.controllers;
 import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Section;
 import giuliasilvestrini.geekhub.entities.User;
+import giuliasilvestrini.geekhub.entities.enums.Role;
+import giuliasilvestrini.geekhub.exceptions.AccessDeniedException;
 import giuliasilvestrini.geekhub.exceptions.NotFoundException;
 import giuliasilvestrini.geekhub.payloads.ConventionDTO;
 import giuliasilvestrini.geekhub.payloads.SectionDTO;
@@ -62,6 +64,24 @@ public class ConventionController {
     }
 
 
+
+    @DeleteMapping("/{conventionId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    public void deleteConvention(@PathVariable UUID conventionId, @AuthenticationPrincipal User user) {
+        Convention convention = conventionService.findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention not found with ID: " + conventionId);
+        }
+
+        if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("Only ADMIN or the creator of the convention are allowed to delete it.");
+        }
+
+        // Cancella la convenzione
+        conventionService.deleteConvention(conventionId);
+    }
+
+
     @GetMapping("/{conventionId}/sec")
 
     public Page<Section> getSections(@PathVariable UUID conventionId,
@@ -84,18 +104,17 @@ public class ConventionController {
     }
 
 
+
     @PostMapping("/{conventionId}/sec")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Section saveSectionForConvention(@PathVariable UUID conventionId, @RequestBody SectionDTO sectionDTO) {
+    public Section saveSectionForConvention(@PathVariable UUID conventionId, @RequestBody SectionDTO sectionDTO, @AuthenticationPrincipal User user) {
         Convention convention = conventionService.findById(conventionId);
         if (convention == null) {
             throw new NotFoundException("Convention not found with ID: " + conventionId);
         }
-        return sectionService.saveSection(sectionDTO, convention.getTitle());
+        return sectionService.saveSection(sectionDTO, convention.getConventionId(), user);
     }
-
-
 
 }
 

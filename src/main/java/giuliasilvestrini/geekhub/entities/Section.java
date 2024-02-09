@@ -28,7 +28,7 @@ public class Section {
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
     private List<Subsection> subsectionList;
 
-//    @ManyToOne
-//    @JoinColumn(name = "creator_id")
-//    private User creator;
+    @ManyToOne
+    private User creator;
+
 }

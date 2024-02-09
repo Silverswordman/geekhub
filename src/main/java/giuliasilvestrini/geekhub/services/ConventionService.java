@@ -5,6 +5,7 @@ import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Location.City;
 import giuliasilvestrini.geekhub.entities.Location.Province;
 import giuliasilvestrini.geekhub.entities.Location.Region;
+import giuliasilvestrini.geekhub.entities.Section;
 import giuliasilvestrini.geekhub.entities.User;
 import giuliasilvestrini.geekhub.entities.enums.Role;
 import giuliasilvestrini.geekhub.exceptions.AccessDeniedException;
@@ -129,18 +130,27 @@ public class ConventionService {
         }
     }
 
-
-
-    public void conventionDelete(UUID conventionId) {
-        Convention delete = this.findById(conventionId);
-        conventionDAO.delete(delete);}
-
-    public Convention update(Convention convention) {
-        if (conventionDAO.existsById(convention.getConventionId())) {
-            return conventionDAO.save(convention);
-        } else {
-
-            throw new IllegalArgumentException("Convention with ID " + convention.getConventionId() + " does not exist.");
+    public Convention addSectionToConvention(UUID conventionId, Section section) {
+        Convention convention = findById(conventionId);
+        if (convention == null) {
+            throw new NotFoundException("Convention not found with ID: " + conventionId);
         }
+
+        // Aggiungi la nuova sezione alla lista delle sezioni della convenzione
+        convention.getSectionList().add(section);
+
+        return conventionDAO.save(convention);
+    }
+
+
+
+
+    public void deleteConvention(UUID conventionId) {
+        Convention conventionToDelete = findById(conventionId);
+        if (conventionToDelete == null) {
+            throw new NotFoundException("Convention not found with ID: " + conventionId);
+        }
+
+        conventionDAO.delete(conventionToDelete);
     }
 }
