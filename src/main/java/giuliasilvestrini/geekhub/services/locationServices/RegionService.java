@@ -28,9 +28,8 @@ public class RegionService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Region> findAll(int size, int page, String order) {
-        Pageable pageable = PageRequest.of(size, page, Sort.by(order));
-        return regionDAO.findAll(pageable);
+    public List<Region> findAll() {
+        return regionDAO.findAll();
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +53,6 @@ public class RegionService {
     }
 
     public Region findRegionByName(String regionName) {
-        // Implementa la logica per trovare una regione dal nome
         return regionDAO.findByRegionName(regionName)
                 .orElseThrow(() -> new NotFoundException("Regione " + regionName + " non trovata"));
     }
@@ -65,4 +63,6 @@ public class RegionService {
     }
 
 
+
 }
+

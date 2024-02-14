@@ -7,13 +7,13 @@ import jakarta.validation.constraints.Size;
 
 public record NewUserDTO(
         @NotEmpty(message = "username è obbligatorio")
-        @Size(min = 3, max = 30, message = "username deve avere minimo 3 caratteri, massimo 30")
+
         String username,
         @NotEmpty(message = "Il nome è obbligatorio")
-        @Size(min = 3, max = 30, message = "Il Nome deve avere minimo 3 caratteri, massimo 30")
+
         String name,
         @NotEmpty(message = "Il cognome è obbligatorio")
-        @Size(min = 3, max = 30, message = "Il Cognome deve avere minimo 3 caratteri, massimo 30")
+
         String surname,
         @Email(message = "L'indirizzo inserito non è un indirizzo valido")
         @NotNull(message = "La mail è un campo obbligatorio!")

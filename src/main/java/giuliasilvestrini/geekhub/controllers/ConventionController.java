@@ -24,6 +24,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/conventions")
+
 public class ConventionController {
     @Autowired
     ConventionService conventionService;
@@ -33,9 +34,14 @@ public class ConventionController {
     SectionService sectionService;
 
     @GetMapping
-    public Page<Convention> getConventions(@RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size,
-                                           @RequestParam(defaultValue = "conventionId") String order) {
+    @ResponseStatus(HttpStatus.OK)
+
+    public Page<Convention> getConventions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(defaultValue = "conventionId") String order) {
+
+
         return conventionService.findAll(page, size, order);
     }
 
@@ -153,6 +159,7 @@ public class ConventionController {
         Section section = sectionService.updateSection(sectionId, sectionDTO, user);
         return section;
     }
+
 
     @PatchMapping("/{conventionId}/sec/{sectionId}/uploadImage")
     @ResponseStatus(HttpStatus.CREATED)
