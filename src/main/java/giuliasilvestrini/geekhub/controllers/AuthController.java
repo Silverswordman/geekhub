@@ -1,6 +1,7 @@
 package giuliasilvestrini.geekhub.controllers;
 
 import giuliasilvestrini.geekhub.entities.User;
+import giuliasilvestrini.geekhub.entities.enums.Role;
 import giuliasilvestrini.geekhub.exceptions.BadRequestException;
 import giuliasilvestrini.geekhub.payloads.NewUserDTO;
 import giuliasilvestrini.geekhub.payloads.NewUserResponseDTO;
@@ -21,9 +22,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody LoginDTO body) {
-        String accessToken = authService.authenticateUser(body);
-        return new LoginResponseDTO(accessToken);
+        return authService.authenticateUser(body);
     }
+
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)

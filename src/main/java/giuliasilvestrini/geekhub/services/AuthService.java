@@ -6,6 +6,7 @@ import giuliasilvestrini.geekhub.exceptions.BadRequestException;
 import giuliasilvestrini.geekhub.exceptions.UnauthorizedException;
 import giuliasilvestrini.geekhub.payloads.NewUserDTO;
 import giuliasilvestrini.geekhub.payloads.authPayload.LoginDTO;
+import giuliasilvestrini.geekhub.payloads.authPayload.LoginResponseDTO;
 import giuliasilvestrini.geekhub.repositories.UserDAO;
 import giuliasilvestrini.geekhub.security.JWTtools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,16 @@ public class AuthService {
     @Autowired
     private UserService userService;
 
-    public String authenticateUser(LoginDTO body) {
+    public LoginResponseDTO authenticateUser(LoginDTO body) {
         User user = userService.findByEmail(body.email());
         if (bcrypt.matches(body.password(), user.getPassword())) {
-            return jwTtools.createToken(user);
+            String token = jwTtools.createToken(user);
+            return new LoginResponseDTO(token, user.getRole(), user.getUserId());
         } else {
             throw new UnauthorizedException("Credenziali non valide!!");
         }
     }
+
 
     public User save(NewUserDTO body) {
         userDao.findByEmail(body.email()).ifPresent(user -> {

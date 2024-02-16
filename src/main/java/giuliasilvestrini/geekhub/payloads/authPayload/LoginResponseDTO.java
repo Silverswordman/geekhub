@@ -1,4 +1,8 @@
 package giuliasilvestrini.geekhub.payloads.authPayload;
 
-public record LoginResponseDTO(String token) {
+import giuliasilvestrini.geekhub.entities.enums.Role;
+
+import java.util.UUID;
+
+public record LoginResponseDTO(String token , Role role, UUID userId) {
 }
