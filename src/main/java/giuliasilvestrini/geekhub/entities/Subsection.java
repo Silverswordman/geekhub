@@ -1,10 +1,7 @@
 package giuliasilvestrini.geekhub.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 
@@ -19,6 +16,7 @@ public class Subsection {
     @GeneratedValue
     private long subsectionId;
     private String subsectionTitle;
+    @Column(columnDefinition = "TEXT")
     private String subsectionDescription;
     private String subsectionTime;
 
