@@ -85,21 +85,29 @@ public class SectionService {
 
     public Section updateSection(Long sectionId, SectionDTO sectionDTO, User user) {
         Section section = findById(sectionId);
+
         if (section == null) {
-            throw new NotFoundException("Sezione non trovata " + sectionId + "" + section.getSectionTitle());
+            throw new NotFoundException("Sezione non trovata con ID: " + sectionId);
         }
 
         Convention convention = section.getConvention();
+
         if (!user.getRole().equals(Role.ADMIN) && !convention.getCreator().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("Solo l admin è il creatore di questa convention possono modificare sezioni");
+            throw new AccessDeniedException("Solo l'admin o il creatore di questa convention possono modificare sezioni");
+        }
+
+        if (sectionDTO.sectionImage() != null && !sectionDTO.sectionImage().isEmpty()) {
+            section.setSectionImage(sectionDTO.sectionImage());
+        } else if (section.getSectionImage() == null || section.getSectionImage().isEmpty()) {
+            section.setSectionImage("https://placekitten.com/100/100");
         }
 
         section.setSectionTitle(sectionDTO.sectionTitle());
         section.setSectionSubtitle(sectionDTO.sectionSubtitle());
 
-
         return sectionDAO.save(section);
     }
+
 
     public Section addSubSectionToSection(Long sectionId, Subsection subsection) {
         Section section = findById(sectionId);

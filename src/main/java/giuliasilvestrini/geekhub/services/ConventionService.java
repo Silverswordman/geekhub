@@ -122,6 +122,7 @@ public class ConventionService {
             if (city == null) {
                 throw new NotFoundException("Not found: " + conventionDTO.city());
             }
+
             existingConvention.setTitle(conventionDTO.title());
             existingConvention.setStartDate(conventionDTO.startDate());
             existingConvention.setEndDate(conventionDTO.endDate());
@@ -130,11 +131,22 @@ public class ConventionService {
             existingConvention.setRegion(region);
             existingConvention.setProvince(province);
             existingConvention.setCity(city);
+
+            if (conventionDTO.logo() != null && !conventionDTO.logo().isEmpty()) {
+                existingConvention.setLogo(conventionDTO.logo());
+            }
+
+            if (conventionDTO.coverImage() != null && !conventionDTO.coverImage().isEmpty()) {
+                existingConvention.setCoverImage(conventionDTO.coverImage());
+            }
+
             return conventionDAO.save(existingConvention);
         } else {
             throw new AccessDeniedException("Only ADMIN or the creator EVENTPLANNER are allowed to update conventions.");
         }
     }
+
+
 
     private static final Logger logger = LoggerFactory.getLogger(ConventionService.class);
 
