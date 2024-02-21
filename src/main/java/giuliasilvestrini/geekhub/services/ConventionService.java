@@ -94,8 +94,8 @@ public class ConventionService {
         convention.setTitle(conventionDTO.title());
         convention.setStartDate(conventionDTO.startDate());
         convention.setEndDate(conventionDTO.endDate());
-        convention.setLogo("https://placekitten.com/100/100");
-        convention.setCoverImage("https://placekitten.com/200/200");
+        convention.setLogo("https://i.postimg.cc/mtrDCD7d/placeholderlogo.png");
+        convention.setCoverImage("https://i.postimg.cc/RNb0RBRv/placeholder.png");
         convention.setSite(conventionDTO.site());
         convention.setAddress(conventionDTO.address());
         convention.setCreator(user);

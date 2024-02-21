@@ -58,7 +58,7 @@ public class SectionService {
         Section section = new Section();
         section.setSectionTitle(sectionDTO.sectionTitle());
         section.setSectionSubtitle(sectionDTO.sectionSubtitle());
-        section.setSectionImage("https://placekitten.com/100/100");
+        section.setSectionImage("https://i.postimg.cc/RNb0RBRv/placeholder.png");
         section.setConvention(convention);
         section.setCreator(user);
 
@@ -99,7 +99,7 @@ public class SectionService {
         if (sectionDTO.sectionImage() != null && !sectionDTO.sectionImage().isEmpty()) {
             section.setSectionImage(sectionDTO.sectionImage());
         } else if (section.getSectionImage() == null || section.getSectionImage().isEmpty()) {
-            section.setSectionImage("https://placekitten.com/100/100");
+            section.setSectionImage("https://i.postimg.cc/RNb0RBRv/placeholder.png");
         }
 
         section.setSectionTitle(sectionDTO.sectionTitle());
