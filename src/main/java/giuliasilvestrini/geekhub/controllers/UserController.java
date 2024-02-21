@@ -110,7 +110,6 @@ public class UserController {
         return requestService.getRequestsPage(0, 10);
     }
 
-
     // Accetta una richiesta
     @PutMapping("/requests/{requestId}/accept")
     @PreAuthorize("hasAuthority('ADMIN')")

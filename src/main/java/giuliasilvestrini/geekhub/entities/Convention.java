@@ -10,6 +10,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +27,8 @@ public class Convention {
     @GeneratedValue
     private UUID conventionId;
     private String title;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String site;
     private String logo;
     private String coverImage;
