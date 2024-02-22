@@ -20,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -166,5 +167,11 @@ public class ConventionController {
     public String uploadSectionImage(@RequestParam("image") MultipartFile file, @PathVariable Long sectionId, @AuthenticationPrincipal User userId) throws Exception {
         return sectionService.uploadSectionImage(file, sectionId, userId);
     }
+
+    @GetMapping("/search")
+    public List<Convention> searchByTitle(@RequestParam String title) {
+        return conventionService.findByTitleContaining(title);
+    }
+
 }
 

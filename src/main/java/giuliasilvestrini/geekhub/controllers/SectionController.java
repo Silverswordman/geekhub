@@ -93,7 +93,7 @@ public class SectionController {
     }
 
     @DeleteMapping("{subsectionId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'EVENTPLANNER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','EVENTPLANNER')")
     public void deleteSubsection(@PathVariable UUID conventionId, @PathVariable Long sectionId, @PathVariable Long subsectionId, @AuthenticationPrincipal User user) {
         Section section = sectionService.findById(sectionId);
         if (section == null) {
