@@ -97,7 +97,6 @@ public class ConventionController {
             throw new AccessDeniedException("Only ADMIN or the creator of the convention are allowed to delete it.");
         }
 
-        // Cancella la convenzione
         conventionService.deleteConvention(conventionId);
     }
 

@@ -46,6 +46,6 @@ public class Convention {
     private User creator;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "convention")
+    @OneToMany(mappedBy = "convention", cascade = CascadeType.ALL)
     private List<Section> sectionList;
 }
