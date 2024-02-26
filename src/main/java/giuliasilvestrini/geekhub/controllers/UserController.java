@@ -1,5 +1,6 @@
 package giuliasilvestrini.geekhub.controllers;
 
+import giuliasilvestrini.geekhub.entities.Convention;
 import giuliasilvestrini.geekhub.entities.Request;
 import giuliasilvestrini.geekhub.entities.User;
 import giuliasilvestrini.geekhub.payloads.RequestDTO;
@@ -13,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -24,8 +27,8 @@ public class UserController {
     private RequestService requestService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public Page<User> usersList(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "15") int size, @RequestParam(defaultValue = "username") String order) {
+
+    public Page<User> usersList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size, @RequestParam(defaultValue = "username") String order) {
         return userService.findAll(page, size, order);
     }
 
@@ -74,7 +77,23 @@ public class UserController {
     }
 
 
-    //Upload avatar generale
+    @PostMapping("/me/favorites/{conventionId}")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+    public Convention addToFavorites(@AuthenticationPrincipal User currentUser, @PathVariable UUID conventionId) {
+        return userService.addToFavorites(currentUser, conventionId);
+    }
+
+    @GetMapping("/me/favorites")
+    public Set<Convention> getFavoriteConventions(@AuthenticationPrincipal User user) {
+        return userService.getFavoriteConventions(user);
+    }
+
+    @GetMapping("/{userId}/favorites")
+    public Set<Convention> getFavoriteConventionsByUserId(@PathVariable UUID userId) {
+        return userService.getFavoriteConventionsByUserId(userId);
+    }
+
+
     @PatchMapping("/{userId}/upload")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")

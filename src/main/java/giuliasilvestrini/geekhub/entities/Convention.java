@@ -48,4 +48,9 @@ public class Convention {
     @JsonIgnore
     @OneToMany(mappedBy = "convention", cascade = CascadeType.ALL)
     private List<Section> sectionList;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "favoriteConventions",fetch = FetchType.EAGER)
+    private List<User> favoritedByUsers;
+
 }

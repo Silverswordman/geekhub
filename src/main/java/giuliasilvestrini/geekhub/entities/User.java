@@ -8,9 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -36,15 +34,22 @@ public class User implements UserDetails {
 
     // Relazione OneToMany: Utente come creatore di eventi
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
-@JsonIgnore
+    @JsonIgnore
     private List<Convention> createdConventions;
 
 
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_favorite_convention",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "convention_id"))
+    private Set<Convention> favoriteConventions = new HashSet<>();
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of( new SimpleGrantedAuthority(this.role.name()));
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
 
     }
 
