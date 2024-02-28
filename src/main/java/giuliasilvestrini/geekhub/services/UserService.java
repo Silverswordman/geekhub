@@ -80,6 +80,27 @@ public class UserService {
     }
 
 
+    public Convention removeFromFavorites(User currentUser, UUID conventionId) {
+        User user = userDAO.findById(currentUser.getUserId())
+                .orElseThrow(() -> new NotFoundException("Utente non trovato"));
+        Convention convention = conventionDAO.findById(conventionId)
+                .orElseThrow(() -> new NotFoundException("Convention non trovata"));
+
+        Set<Convention> favoriteConventions = user.getFavoriteConventions();
+
+        if (favoriteConventions.contains(convention)) {
+            favoriteConventions.remove(convention);
+            user.setFavoriteConventions(favoriteConventions);
+            userDAO.save(user);
+        } else {
+            throw new BadRequestException("La convenzione non è presente nei preferiti dell'utente.");
+        }
+
+        return convention;
+    }
+
+
+
     public Set<Convention> getFavoriteConventions(User user) {
         return user.getFavoriteConventions();
     }

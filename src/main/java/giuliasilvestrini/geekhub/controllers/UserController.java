@@ -79,8 +79,15 @@ public class UserController {
     @PostMapping("/me/favorites/{conventionId}")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public Convention addToFavorites(@AuthenticationPrincipal User currentUser, @PathVariable UUID conventionId) {
-        return userService.addToFavorites(currentUser, conventionId);
-    }
+        return userService.addToFavorites(currentUser, conventionId);}
+
+
+        @DeleteMapping("/{userId}/favorites/{conventionId}")
+        @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+        public void removeFromFavorites(@AuthenticationPrincipal User currentUser, @PathVariable UUID conventionId) {
+            userService.removeFromFavorites(currentUser, conventionId);
+        }
+
 
     @GetMapping("/me/favorites")
     public Set<Convention> getFavoriteConventions(@AuthenticationPrincipal User user) {
