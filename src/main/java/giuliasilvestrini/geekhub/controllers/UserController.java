@@ -33,7 +33,6 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public User uniqueUser(@PathVariable UUID userId) {
         return userService.findById(userId);
