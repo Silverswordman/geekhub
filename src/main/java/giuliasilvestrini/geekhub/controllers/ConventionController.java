@@ -39,7 +39,7 @@ public class ConventionController {
 
     public Page<Convention> getConventions(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "conventionId") String order) {
 
 

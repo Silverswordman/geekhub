@@ -32,7 +32,6 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user")
     private Request request;
 
-    // Relazione OneToMany: Utente come creatore di eventi
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Convention> createdConventions;
