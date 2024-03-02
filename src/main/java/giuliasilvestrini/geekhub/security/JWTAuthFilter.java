@@ -47,7 +47,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String[] allowedPaths = {"/auth/**", "/swagger-ui/**", "/v3/**"};
-        //  non applico il filtro per generare la documentazione swagger e per l'endpoint /auth
         return Stream.of(allowedPaths)
                 .anyMatch(path -> pathMatcher.match(path, request.getServletPath()));
     }
