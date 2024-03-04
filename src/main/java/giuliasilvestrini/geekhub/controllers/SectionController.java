@@ -40,7 +40,7 @@ public class SectionController {
     @GetMapping
     public Page<Subsection> getSubsections(@PathVariable long sectionId,
                                            @RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "6") int size,
+                                           @RequestParam(defaultValue = "4") int size,
                                            @RequestParam(defaultValue = "subsectionTitle") String order) {
 
 

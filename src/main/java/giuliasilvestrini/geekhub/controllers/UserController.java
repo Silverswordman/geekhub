@@ -49,7 +49,7 @@ public class UserController {
     // Delete user for the Admin
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAuthority(ADMIN)")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteUser(@PathVariable UUID userId) {
         userService.userDelete(userId);
     }

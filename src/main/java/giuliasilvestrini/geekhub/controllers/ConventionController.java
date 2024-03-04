@@ -106,7 +106,7 @@ public class ConventionController {
 
     public Page<Section> getSections(@PathVariable UUID conventionId,
                                      @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "6") int size,
+                                     @RequestParam(defaultValue = "4") int size,
                                      @RequestParam(defaultValue = "sectionTitle") String order) {
 
         Convention convention = conventionService.findById(conventionId);
